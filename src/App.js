@@ -1,35 +1,55 @@
-import React, {useEffect, useState} from 'react';
-import Navbar from './components/Navbar';
-import Characters from './components/Characters';
-
+import React, { useEffect, useState } from 'react'
+import Navbar from './components/Navbar'
+import Characters from './components/Characters'
+import Pagination from './components/Pagination'
 
 function App() {
-    
-    const API_URL = 'https://rickandmortyapi.com/api/character';
-    const [characters, setcharacters] = useState([]);
+  const API_URL = 'https://rickandmortyapi.com/api/character'
+  const [characters, setcharacters] = useState([])
+  const [info, setInfo] = useState({})
 
-    const fetchCharacters = (API_URL) => {
-        fetch(API_URL)
-        .then(response => response.json())
-        .then(data => setcharacters(data.results))
-        .catch(error => console.log(error))
-    }
+  const fetchCharacters = (API_URL) => {
+    fetch(API_URL)
+      .then((response) => response.json())
+      .then((data) => {
+        setcharacters(data.results)
+        setInfo(data.info)
+      })
+      .catch((error) => console.log(error))
+  }
 
-    useEffect(() => {
-        fetchCharacters(API_URL)
-    }, [])
-    
+  const onPrevious = () => {
+    fetchCharacters(info.prev)
+  }
 
-    return ( 
-        <>
-            <Navbar brand="Rick and Morty APP" />
+  const onNext = () => {
+    fetchCharacters(info.next)
+  }
 
-            <div className="container mt-5">
-                <Characters characters={characters} />
-            </div>
-        </>
-    
-    );
+  useEffect(() => {
+    fetchCharacters(API_URL)
+  }, [])
+
+  return (
+    <>
+      <Navbar brand="Rick and Morty APP" />
+      <div className="container mt-5">
+        <Pagination
+          prev={info.prev}
+          next={info.next}
+          onPrevious={onPrevious}
+          onNext={onNext}
+        />
+        <Characters characters={characters} />
+        <Pagination
+          prev={info.prev}
+          next={info.next}
+          onPrevious={onPrevious}
+          onNext={onNext}
+        />
+      </div>
+    </>
+  )
 }
 
-export default App;
+export default App
